@@ -1,0 +1,34 @@
+{
+  "name": "go_to_home_chatting",
+  "version": "1.0.0",
+  "description": ":house_with_garden: :runner::runner::runner::runner: :school:",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ParkChangSun/go_to_home_chatting.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ParkChangSun/go_to_home_chatting/issues"
+  },
+  "homepage": "https://github.com/ParkChangSun/go_to_home_chatting#readme",
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "babel-preset-latest": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "gulp-nodemon": "^2.4.2"
+  },
+  "dependencies": {
+    "ejs": "^2.6.1",
+    "express": "^4.17.1",
+    "mariadb": "^2.0.5",
+    "mysql": "^2.17.1",
+    "socket.io": "^2.2.0"
+  }
+}
