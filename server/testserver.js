@@ -2,17 +2,17 @@ var express = require('express');
 var app = express();
 var http = require('http');
 var server = http.createServer(app);
-var io = require('socket.io')(server);
+var io = require('socket.io').listen(server);
 var path = require('path');
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
+var cors = require('cors');
 
 var dbconnection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    port: 3306,
-    password: 'aeuna',
-    database: 'my_db'
+    password: 'wjsn13blossoms',
+    database: 'testdb'
 });
 
 dbconnection.connect(function(err){
@@ -29,6 +29,7 @@ app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'views')));
 app.set('views', path.join(__dirname, 'views'));
 app.use(bodyParser.urlencoded({ extended:false }));
+app.use(cors());
 
 
 app.get('/login', function(req, res){
@@ -48,7 +49,7 @@ app.post('/login',function(req,res){
           
           var db_pwd = results[0].password;
           if(pwd == db_pwd){
-              res.render('index.html', { username: name});
+              res.render('index.html');
           }
           else{
               res.render('login.html', { alert:true});
@@ -62,7 +63,7 @@ app.get('/index', function(req, res){
 });
 
 app.get('/register', function(req, res){
-  res.render('register.html', { alert: false});
+  res.render('register.html');
 });
 
 app.post('/register', function(req,res){
@@ -80,29 +81,63 @@ app.post('/register', function(req,res){
 
 
 
-io.on('connection', function(socket){ //소켓과의 connection establish
-  console.log('A user connected');
-  socket.on('login', function(data){
-    console.log('client logged-in:' + data.username);
-    socket.username = data.username;
-    io.emit('login', data.username);
-  });
+var rooms = ['room1', 'room2'];
 
-  socket.on('disconnect', function(){ //event에 대해 listening
-    socket.broadcast.emit('logout',socket.username);
+io.on('connection', function(socket){
+
+	socket.on('disconnect', function(){
     console.log('user disconnected');
   });
 
-  socket.on('chat message', function(data){
-    console.log('name: %s message: %s', socket.username, data.msg);
-    var msg = {
-      username: socket.username,
-      msg: data.msg
-    };
-  	io.emit('chat message', msg); //서버와 연결된 모든 소켓에게 event에 대해 전송
+  socket.on('joinRoom', function(num){
+    socket.join(rooms[num], function(){
+      console.log('user join '+rooms[num]);
+      io.to(rooms[num]).emit('joinRoom', num);
+    });
   });
+
+  socket.on('leaveRoom', function(num){
+    socket.leave(rooms[num], function(){
+      console.log('user leave '+rooms[num]);
+      io.to(rooms[num]).emit('leaveRoom', num);
+    })
+  })
+
+  socket.on('chat message', function(num, msg){
+  	console.log('message: ' + msg+'from room '+num);
+  	io.to(rooms[num]).emit('chat message', msg);
+  });
+
 });
+
+
+
+app.get('/reloadroom', function(req, res) {
+  console.log('reloadroom');
+  res.json({ rooms: ['room1', 'room2'] })
+});
+
+app.get('/createroom', function(req, res) {
+  console.log('createroom');
+  res.json({ rooms: rooms })
+})
+
+app.get('/joinroom', function(req, res) {
+  console.log('joinroom')
+  res.json({ roomnumber: 1})
+})
+
+
+
 
 server.listen(3000, function(){
 	console.log('Connected 3000');
 });
+
+
+
+
+
+
+
+

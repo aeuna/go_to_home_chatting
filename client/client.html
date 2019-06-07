@@ -1,9 +1,79 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>chatting client</title>
+	<title>chat client</title>
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+
+	
 </head>
 <body>
+	<div id="sidebar">
+
+		<div id="userstatus">
+			<div id="loginbox" style="display: block;">
+				<form action="http://localhost:3000/login" method="get">
+					<input type="text" name="id">
+					<input type="text" name="password">
+					<input type="submit" name="login">
+				</form>
+			</div>
+			<div id="userinfo" style="display: none;">
+				<p>_username here</p>
+			</div>
+		</div>
+
+		<ul id="roomlist">
+			<li id="joinroom">join room1</li>
+			<li>join room2</li>
+		</ul>
+
+
+		<button id="createroom">createroom</button>
+		<button id="roomsreload">roomsreload</button>
+
+	</div>
+
+	<script type="text/javascript">
+
+		$('#createroom').click(function() {
+			$.ajax({
+				method: 'get',
+				url: 'http://localhost:3000/createroom',
+				success: function(result) {
+					console.log(result)
+				}
+			})
+		})
+
+		$('#reloadroom').click(function() {
+			$.ajax({
+				method: 'get',
+				url: 'http://localhost:3000/reloadroom',
+				success: function(result) {
+					console.log(result)
+				}
+			})
+		})
+
+		$('#joinroom').click(function() {
+			$.ajax({
+				method: 'get',
+				url: 'http://localhost:3000/joinroom',
+				success: function(result) {
+					console.log(result)
+					$('#mainwindow').html(fdsafdsaf)
+				}
+			})
+		})
+
+
+	</script>
+
+
+	<div id="mainwindow">
+		
+	</div>
 
 </body>
 </html>
