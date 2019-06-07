@@ -6,6 +6,7 @@ var io = require('socket.io').listen(server);
 var path = require('path');
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
+var cors = require('cors');
 
 var dbconnection = mysql.createConnection({
     host: 'localhost',
@@ -28,6 +29,7 @@ app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'views')));
 app.set('views', path.join(__dirname, 'views'));
 app.use(bodyParser.urlencoded({ extended:false }));
+app.use(cors());
 
 
 app.get('/login', function(req, res){
@@ -79,20 +81,63 @@ app.post('/register', function(req,res){
 
 
 
+var rooms = ['room1', 'room2'];
 
 io.on('connection', function(socket){
-	console.log('A user connected');
 
 	socket.on('disconnect', function(){
     console.log('user disconnected');
   });
 
-  socket.on('chat message', function(msg){
-  	console.log('message: ' + msg);
-  	io.emit('chat message', msg);
+  socket.on('joinRoom', function(num){
+    socket.join(rooms[num], function(){
+      console.log('user join '+rooms[num]);
+      io.to(rooms[num]).emit('joinRoom', num);
+    });
   });
+
+  socket.on('leaveRoom', function(num){
+    socket.leave(rooms[num], function(){
+      console.log('user leave '+rooms[num]);
+      io.to(rooms[num]).emit('leaveRoom', num);
+    })
+  })
+
+  socket.on('chat message', function(num, msg){
+  	console.log('message: ' + msg+'from room '+num);
+  	io.to(rooms[num]).emit('chat message', msg);
+  });
+
 });
+
+
+
+app.get('/reloadroom', function(req, res) {
+  console.log('reloadroom');
+  res.json({ rooms: ['room1', 'room2'] })
+});
+
+app.get('/createroom', function(req, res) {
+  console.log('createroom');
+  res.json({ rooms: rooms })
+})
+
+app.get('/joinroom', function(req, res) {
+  console.log('joinroom')
+  res.json({ roomnumber: 1})
+})
+
+
+
 
 server.listen(3000, function(){
 	console.log('Connected 3000');
 });
+
+
+
+
+
+
+
+
