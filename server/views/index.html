@@ -6,11 +6,11 @@
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 </head>
 <body>
-  <select>
+  <!-- <select>
     <option value="Room1">Room1</option>
     <option value="Room2">Room2</option>
-  </select>
-	<ul id="messages"></ul>
+  </select> -->
+	<div id="messages"></div>
 	<form action="">
     <input id="m" autocomplete="off" /><button>Send</button>
   </form>
@@ -24,47 +24,47 @@
   	$(function(){
 		var socket = io(); //socket.io서버에 접속
 		socket.emit("login" , {username: username }); //최초로 한번 서버에게 login메시지 전달
-  		$('form').submit(function(e){ //form submit
-      var room = ['room1', 'room2'];
-      var num = 0;
+  		// $('form').submit(function(e){ //form submit
+    //   var room = ['room1', 'room2'];
+    //   var num = 0;
 
-  		var socket = io();
+  	// 	var socket = io();
   		$('form').submit(function(e){
   			e.preventDefault();
-  			socket.emit('chat message', num, $('#m').val());
+  			// socket.emit('chat message', num, $('#m').val());
   			socket.emit('chat message',{ msg: $('#m').val()}); //서버에 메시지 전송
   			$('#m').val('');
   			return false;
 		  });
 		socket.on('login', function(data){ //서버로부터 메시지 listening
-			$('#messages').append("<li><strong>" + data + "</strong> 참여했어용~~ </li>");
+			$('#messages').append("<li><strong>" + data + "</strong> 님이 참가하셨습니다. </li>");
 		  });
 		socket.on('logout', function(data){ //서버로부터 메시지 listening
-			$('#messages').append("<li><strong>" + data + "</strong> 퇴장했어용~~ </li>");
+			$('#messages').append("<li><strong>" + data + "</strong> 님이 퇴장하셨습니다. </li>");
   		});			  
 		socket.on('chat message', function(data){ //서버로부터 메시지 listening
 			$('#messages').append("<li><strong>" + data.username + "</strong> : " + data.msg + "</li>");
   		});
+	});
+    //   socket.emit('joinRoom', num);
+    //   $('select').change(function(){
+    //     socket.emit('leaveRoom', num);
+    //     num++;
+    //     num = num%2
+    //     socket.emit('joinRoom', num);
+    //   })
 
-      socket.emit('joinRoom', num);
-      $('select').change(function(){
-        socket.emit('leaveRoom', num);
-        num++;
-        num = num%2
-        socket.emit('joinRoom', num);
-      })
+    //   socket.on('joinRoom', function(num){
+    //     $('#messages').append($('<li>').text('user joined'+room[num]));
+    //   });
 
-      socket.on('joinRoom', function(num){
-        $('#messages').append($('<li>').text('user joined'+room[num]));
-      });
-
-      socket.on('leaveRoom', function(num){
-        $('#messages').append($('<li>').text('user leaved'+room[num]));
-      });
-  		socket.on('chat message', function(msg){
-  			$('#messages').append($('<li>').text(msg));
-  		});
-  	});
+    //   socket.on('leaveRoom', function(num){
+    //     $('#messages').append($('<li>').text('user leaved'+room[num]));
+    //   });
+  	// 	socket.on('chat message', function(msg){
+  	// 		$('#messages').append($('<li>').text(msg));
+  	// 	});
+  	// });
 	</script> 
 </body>
 </html>
