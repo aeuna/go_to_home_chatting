@@ -16,23 +16,34 @@
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 </head>
 <body>
-	<ul id="messages"></ul>
+	<div id="messages"></div> 
 	<form action="">
     <input id="m" autocomplete="off" /><button>Send</button>
   </form>
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src ="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script type="text/javascript">
+	  username = '<%= username %>';
+	  </script>
 	<script>
   	$(function(){
-  		var socket = io();
-  		$('form').submit(function(e){
+		var socket = io(); //socket.io서버에 접속
+		socket.emit("login" , {username: username }); //최초로 한번 서버에게 login메시지 전달
+  		$('form').submit(function(e){ //form submit
   			e.preventDefault();
-  			socket.emit('chat message', $('#m').val());
+  			socket.emit('chat message',{ msg: $('#m').val()}); //서버에 메시지 전송
   			$('#m').val('');
   			return false;
-  		});
-  		socket.on('chat message', function(msg){
-  			$('#messages').append($('<li>').text(msg));
+		  });
+		socket.on('login', function(data){ //서버로부터 메시지 listening
+			$('#messages').append("<li><strong>" + data + "</strong> 참여했어용~~ </li>");
+		  });
+		socket.on('logout', function(data){ //서버로부터 메시지 listening
+			$('#messages').append("<li><strong>" + data + "</strong> 퇴장했어용~~ </li>");
+  		});			  
+		socket.on('chat message', function(data){ //서버로부터 메시지 listening
+			$('#messages').append("<li><strong>" + data.username + "</strong> : " + data.msg + "</li>");
   		});
   	});
 	</script> 
