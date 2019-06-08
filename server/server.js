@@ -32,7 +32,7 @@ app.use(bodyParser.urlencoded({ extended:false }));
 
 
 app.get('/login', function(req, res){
-  res.render('login.html', { alert: false}); //처음에 alert 값 false 비밀번호 틀릴시 alert는 true 되고 경고 반환
+  res.render('login.html', { alert: false }); //처음에 alert 값 false 비밀번호 틀릴시 alert는 true 되고 경고 반환
 });
 
 app.post('/login',function(req,res){
@@ -42,16 +42,16 @@ app.post('/login',function(req,res){
   var sql = `SELECT * FROM user_info WHERE username = ?`;
   connection.query(sql,[name],function(error,results,fields){
       if (results.length==0){
-          res.render('login.html',{ alert:true});
+          res.render('login.html',{ alert:true });
       }
       else {
           
           var db_pwd = results[0].password;
           if(pwd == db_pwd){
-              res.render('index.html', { username: name});
+              res.render('index.html', { username: name });
           }
           else{
-              res.render('login.html', { alert:true});
+              res.render('login.html', { alert:true });
           }
       }
   });
@@ -99,10 +99,19 @@ io.on('connection', function(socket){ //소켓과의 connection establish
       username: socket.username,
       msg: data.msg
     };
-     io.emit('chat message', msg); //서버와 연결된 모든 소켓에게 event에 대해 전송
+     io.emit('chat message', msg); //basic namespace와 연결된 모든 소켓에게 event에 대해 전송
   });
 });
 
 server.listen(3000, function(){
    console.log('Connected 3000');
 });
+
+
+
+
+
+
+
+
+

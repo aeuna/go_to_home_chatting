@@ -9,18 +9,18 @@ var mysql = require('mysql');
 var cors = require('cors');
 
 var dbconnection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'wjsn13blossoms',
-    database: 'testdb'
+  host: 'localhost',
+  user: 'root',
+  password: 'wjsn13blossoms',
+  database: 'testdb'
 });
 
 dbconnection.connect(function(err){
-    if(err){
-        console.error('error connecting: ' + err.stack);
-        return;
-    }
-    console.log('Success DB connection');
+  if(err){
+    console.error('error connecting: ' + err.stack);
+    return;
+  }
+  console.log('Success DB connection');
 });
 
 app.locals.pretty = true;
@@ -32,9 +32,7 @@ app.use(bodyParser.urlencoded({ extended:false }));
 app.use(cors());
 
 
-app.get('/login', function(req, res){
-  res.render('login.html');
-});
+
 
 app.post('/login',function(req,res){
   var name = req.body.name;
@@ -80,55 +78,74 @@ app.post('/register', function(req,res){
 
 
 
-
-var rooms = ['room1', 'room2'];
+//this would be in database
+var rooms = {
+  "lobby": {
+    users: [],
+    activeUsers: [],
+    messages: [],
+  },
+  "room0": {
+    users: [],
+    activeUsers: [],
+    messages: ['123', '4444'],
+  },
+}
 
 io.on('connection', function(socket){
-
+  console.log('user connected')
 	socket.on('disconnect', function(){
     console.log('user disconnected');
   });
 
-  socket.on('joinRoom', function(num){
-    socket.join(rooms[num], function(){
-      console.log('user join '+rooms[num]);
-      io.to(rooms[num]).emit('joinRoom', num);
-    });
+  
+  socket.on('chat message', function(userName, msg, roomFrom){
+  	console.log(userName+': ' + msg+'from room '+roomFrom);
+    rooms[roomFrom].messages.push(msg)
+    io.to(roomFrom).emit('chat message', userName, msg)
   });
 
-  socket.on('leaveRoom', function(num){
-    socket.leave(rooms[num], function(){
-      console.log('user leave '+rooms[num]);
-      io.to(rooms[num]).emit('leaveRoom', num);
+  socket.on('messages request', function(roomName) {
+    socket.emit('messages response', rooms[roomName].messages)
+  })
+
+
+  socket.on('roomsReloadReq', function() {
+    socket.emit('roomsReloadRes', rooms)//don't go to all users!!!
+  })
+
+  socket.on('createRoomReq', function(roomName) {
+    //ToDo database
+    rooms[roomName] = {
+      users: [],
+      activeUsers: [],
+      messages: []
+    }
+    io.emit('roomsReloadRes', rooms)
+    console.log(rooms)
+  })
+
+  socket.on('joinRoomReq', function(roomName) {
+    socket.join(roomName, function() {
+      //database rooms.users add
+      rooms[roomName].messages.push('a user joined this room')
+      io.to(roomName).emit('chat message', 'a user joined this room');
     })
   })
 
-  socket.on('chat message', function(num, msg){
-  	console.log('message: ' + msg+'from room '+num);
-  	io.to(rooms[num]).emit('chat message', msg);
-  });
+  socket.on('leaveRoomReq', function(roomName) {
+    socket.leave(roomName, function() {
+      //database rooms.users remove
+      rooms[roomName].messages.push('a user left this room')
+      io.to(roomName).emit('chat message', 'a user left this room')
+
+      if (rooms[roomName].users.length == 0) {
+        delete rooms[roomName]
+      }
+    })
+  })
 
 });
-
-
-
-app.get('/reloadroom', function(req, res) {
-  console.log('reloadroom');
-  res.json({ rooms: ['room1', 'room2'] })
-});
-
-app.get('/createroom', function(req, res) {
-  console.log('createroom');
-  res.json({ rooms: rooms })
-})
-
-app.get('/joinroom', function(req, res) {
-  console.log('joinroom')
-  res.json({ roomnumber: 1})
-})
-
-
-
 
 server.listen(3000, function(){
 	console.log('Connected 3000');

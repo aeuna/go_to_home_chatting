@@ -14,7 +14,10 @@
 	<form action="">
     <input id="m" autocomplete="off" /><button>Send</button>
   </form>
-  <script src="/socket.io/socket.io.js"></script>
+<!--   <script src="/socket.io/socket.io.js"></script> -->
+  <script type="text/javascript">
+    const io = require('socket.io')
+  </script>
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
   <script src ="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
   <script type="text/javascript">
@@ -23,16 +26,10 @@
 	<script>
   	$(function(){
 		var socket = io(); //socket.io서버에 접속
-		socket.emit("login" , {username: username }); //최초로 한번 서버에게 login메시지 전달
-  		// $('form').submit(function(e){ //form submit
-    //   var room = ['room1', 'room2'];
-    //   var num = 0;
-
-  	// 	var socket = io();
   		$('form').submit(function(e){
   			e.preventDefault();
-  			// socket.emit('chat message', num, $('#m').val());
-  			socket.emit('chat message',{ msg: $('#m').val()}); //서버에 메시지 전송
+  			socket.emit('chat message', $('#m').val());
+  			
   			$('#m').val('');
   			return false;
 		  });
