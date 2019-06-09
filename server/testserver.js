@@ -120,12 +120,11 @@ io.on('connection', function(socket){
 
 
   socket.on('roomsReloadReq', function() {
-    socket.emit('roomsReloadRes', rooms)//don't go to all users!!!
+    socket.emit('roomsReloadRes', rooms)
   })
 
   socket.on('createRoomReq', function(roomName) {
     console.log(createRoomReq)
-    //ToDo database
     rooms[roomName] = {
       users: [],
       activeUsers: [],

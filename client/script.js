@@ -79,7 +79,7 @@ $(document).ready(function() {
 		$('#messages').empty()
 		console.log(messages)
 		for (var i = 0; i < messages.length; i++) {
-			$('#messages').append($('<li>').text(messages[i]))
+			$('#messages').append($('<li>').text(messages[i].message))
 		}
 	})
 })
