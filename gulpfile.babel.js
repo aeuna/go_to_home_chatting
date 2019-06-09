@@ -9,7 +9,7 @@ export function watch() {
 
 export function start (done) {
   nodemon({
-    script: 'server/server.js'
+    script: 'server/testserver.js'
   , ext: 'js html css'
   , env: { 'NODE_ENV': 'development' }
   , done: done
