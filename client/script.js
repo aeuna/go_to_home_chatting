@@ -99,6 +99,6 @@ function joinRoom(roomName) {
 	}
 }
 
-
+console.log(socket.rooms)
 
 
