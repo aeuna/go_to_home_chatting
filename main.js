@@ -26,8 +26,8 @@ function createWindow () {
     }
   })
 
-  win.loadFile('views/index.html')
-  login.loadFile('login/index.html')
+  win.loadFile('client/chat/index.html')
+  login.loadFile('client/Login/index.html')
 
   // 개발자 도구를 엽니다.
   win.webContents.openDevTools()
