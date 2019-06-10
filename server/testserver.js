@@ -11,8 +11,8 @@ var cors = require('cors');
 var db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'wjsn13blossoms',
-  database: 'ttoktalk'
+  password: 'aeuna',
+  database: 'my_db'
 });
 
 db.connect(function(err){
