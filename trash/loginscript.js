@@ -1,3 +1,14 @@
+const ipc = require('electron').ipcRenderer;
+if(txtUser==usr && txtPwd==pass){
+  ipc.sendSync('authorized', 'ping')
+}
+else{
+  $('#lbl').text('username or password is incorrect')
+}
+
+
+
+
 class Form {
   constructor(data) {
     this.originalData = data;

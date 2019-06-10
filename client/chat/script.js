@@ -32,9 +32,16 @@ $(document).ready(function() {
 	socket.emit('roomsReloadReq')
 	socket.on('roomsReloadRes', function(data) {
 		state.rooms = data
-		$('#roomList').empty()
+		$('.contacts').empty()
 		for (var key in data) {
-			$('#roomList').append("<li onclick=joinRoom(\""+key+"\")>"+key+"</li>")
+			var d = $('#roomdummy').clone(true)
+			if (state.rooms.includes(key)) {
+				d.attr("class", "active")
+			}
+			d.removeAttr('id style')
+			d.children('.roomname').val(key)
+			//"<li onclick=joinRoom(\""+key+"\")></li>"
+			$('.contacts').append(d.show())
 		}
 	})
 
@@ -70,7 +77,17 @@ $(document).ready(function() {
 	})
 
 	socket.on('chat message', function(userName, msg) {
-		$('#messages').append($('<li>').text(userName+":"+msg));
+		var d
+		if (userName == state.user.name) {
+			d = $('#senddummy').clone(true)
+			$(d).children('.msg_container_send').text(msg)
+		}
+		else {
+			d = $('#chatdummy').clone(true)
+			$(d).children('.msg_container').text(msg)
+		}
+		d.removeAttr('id style')
+		$('.msg_card_body').append($(d));
 	})
 
 
@@ -79,7 +96,16 @@ $(document).ready(function() {
 		$('#messages').empty()
 		console.log(messages)
 		for (var i = 0; i < messages.length; i++) {
-			$('#messages').append($('<li>').text(messages[i]))
+			var d
+			if (userName == state.user.name) {
+				d = $('#senddummy').clone(true)
+				$(d).children('.msg_container_send').text(msg)
+			}
+			else {
+				d = $('#chatdummy').clone(true)
+				$(d).children('.msg_container').text(msg)
+			}
+			d.removeAttr('id style')
 		}
 	})
 })
@@ -99,6 +125,6 @@ function joinRoom(roomName) {
 	}
 }
 
-
+console.log(socket.rooms)
 
 
