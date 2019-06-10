@@ -25,7 +25,7 @@ $(document).ready(function() {
       success: function(result) {
         if (result.authorized) {
           console.log('login success')
-          setTimeout(function() {ipc.sendSync('user-authorized', 'ping')}, 3000);
+          setTimeout(function() {ipc.sendSync('user-authorized', 'ping')}, 1000);
         }
         else {
           console.log('login fail')

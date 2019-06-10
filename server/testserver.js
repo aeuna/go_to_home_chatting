@@ -100,7 +100,7 @@ io.on('connection', function(socket){
   socket.on('chat message', function(userName, msg, roomFrom){
     // rooms[roomFrom].messages.push(msg)
     //testchat part must be changed with roomFrom
-    db.query(`INSERT INTO testchat (name, message) VALUES (?, ?)`, [userName, msg], function(error, results, fields) {
+    db.query(`INSERT INTO testchat (roomname, name, message) VALUES (?, ?, ?)`, [roomFrom, userName, msg], function(error, results, fields) {
       if (error) {
         console.log(userName+': ' + msg+'from room '+roomFrom, error);
       }
@@ -111,7 +111,7 @@ io.on('connection', function(socket){
   socket.on('messages request', function(roomName) {
     console.log('messages request')
     //testchat part must be changed with roomFrom
-    db.query(`SELECT * FROM testchat`, function(error, results, fields) {
+    db.query(`SELECT * FROM testchat WHERE roomname ?`, [roomName], function(error, results, fields) {
       if (results) {
         socket.emit('messages response', results)
       }
@@ -129,18 +129,7 @@ io.on('connection', function(socket){
       users: [],
       activeUsers: [],
     }
-    //testchat part must be changed with roomFrom
-    db.query(`CREATE TABLE roomName (
-      id int not null auto_increment,
-      name varchar(100) not null,
-      message varchar(100) not null,
-      ts timestamp default current_timestamp,
-      primary key(id)
-      );`, function(error, results, fields) {
-        if (error) {
-          console.log(error)
-        }
-      })
+    
     io.emit('roomsReloadRes', rooms)
     console.log(rooms)
   })
@@ -149,7 +138,7 @@ io.on('connection', function(socket){
     socket.join(roomName, function() {
       //database rooms.users add
       // rooms[roomName].messages.push('a user joined this room')
-      db.query(`INSERT INTO testchat (name, message) VALUES (?, ?)`, ['server', 'a user joined'], function(error, results, fields) {
+      db.query(`INSERT INTO testchat (roomname, name, message) VALUES (?, ?, ?)`, [roomName, 'server', 'a user joined'], function(error, results, fields) {
         if (error) {
           console.log('server: a user joined from room '+roomFrom, error);
         }
@@ -164,7 +153,7 @@ io.on('connection', function(socket){
     socket.leave(roomName, function() {
       //database rooms.users remove
       // rooms[roomName].messages.push('a user left this room')
-      db.query(`INSERT INTO testchat (name, message) VALUES (?, ?)`, ['server', 'a user left'], function(error, results, fields) {
+      db.query(`INSERT INTO testchat (roomname, name, message) VALUES (?, ?, ?)`, [roomName, 'server', 'a user left'], function(error, results, fields) {
         if (error) {
           console.log('server: a user left from room '+roomFrom, error);
         }
